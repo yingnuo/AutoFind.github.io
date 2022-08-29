@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    li {
+        list-style: none;
+    }
+    #find {
+        width: 300px;
+        margin: 0 auto;  
+    }
+    #result {
+        width: 303px;
+        margin-left: 233px;
+        border: 0.5px solid black;
+        border-top: 0px;
+        border-bottom: 0px;
+        text-indent: 0.5em;
+        display:none;
+    }
+    #nav {
+        width: 400px;
+        margin: 0 auto;
+    }
+    #result li {
+        border-bottom: 0.5px solid black;
+
+    }
+</style>
+<script type="text/javascript">
+window.onload=()=>{
+    var find = document.getElementById('find')
+    find.onkeyup=()=>{
+           if(find.value==='')
+    {
+        document.getElementById('result').style.display='none';
+    }else{
+               const xhr = new XMLHttpRequest();
+               xhr.onreadystatechange=()=>{
+                   if (xhr.readyState===4) {
+                       if (xhr.status >= 200 && xhr.status < 300) {
+                           const json = JSON.parse(xhr.responseText);
+                           let html = '';
+                           for (let i = 0; i < json.length; i++)
+                           {
+                               html+=' <li onclick="show(this.innerText)">'+json[i].result+'</li>';
+                           }
+                           document.getElementById('result').innerHTML=html;
+                           document.getElementById('result').style.display='block';
+                       }
+                   }
+               };
+               xhr.open("GET","/af/find?result="+find.value,true);
+               xhr.send();
+    }
+    }
+    document.getElementById('btn').onclick=()=>{
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange=()=>{
+            if (xhr.readyState===4)
+            {
+                if (xhr.status>=200 && xhr.status < 300)
+                {
+                    alert( xhr.responseText);
+                }
+            }
+        }
+        xhr.open("get","/af/find?type=query&result="+find.value,true);
+        xhr.send();
+    };
+}
+// function result(isFlag){
+//     var r = document.querySelectorAll('#result li');
+//     for(var i = 0 ; i < r.length ; i++){
+//         if(isFlag===true){
+//            r[i].style.display='block';
+//         }else{
+//             r[i].style.display='none';
+//         }
+//     }
+// }
+function show(text){
+    document.getElementById('find').value=text;
+    document.getElementById('result').style.display='none';
+    }
+</script>
+<body>
+      <div id="nav">
+          <input type="text" id="find">
+          <button id="btn">搜索</button>
+      </div>
+
+    <ul id="result">
+    </ul>
+</body>
+</html>
